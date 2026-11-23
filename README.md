@@ -313,7 +313,7 @@ back out of what it became. `--json` prints the same rows for scripts.
 | `DATABASE_MIN_CONNS` | `0` | connections the pool keeps open between requests |
 | `RPC_URL` | `https://soroban-testnet.stellar.org` | Stellar RPC endpoint |
 | `NETWORK_PASSPHRASE` | `Test SDF Network ; September 2015` | the network you expect `RPC_URL` to serve |
-| `HTTP_ADDR` | `:8080` | listen address |
+| `HTTP_ADDR` | `:8080` | listen address for the JSON API and browse UI; an empty host listens on all interfaces, e.g. `127.0.0.1:8080` for loopback only (`--addr` overrides it) |
 | `METRICS_ADDR` | — (off) | separate `host:port` serving Prometheus metrics at `GET /metrics`; must differ from `HTTP_ADDR`. See [Metrics](#metrics) |
 | `TLS_CERT_FILE` | — | PEM certificate path; set with `TLS_KEY_FILE` to serve HTTPS (`--tls-cert` overrides) |
 | `TLS_KEY_FILE` | — | PEM private key path; set with `TLS_CERT_FILE` (`--tls-key` overrides) |
