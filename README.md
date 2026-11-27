@@ -354,6 +354,22 @@ back out of what it became. `--json` prints the same rows for scripts.
 | `API_TOKENS` | — | comma-separated bearer tokens the write endpoints accept; unset keeps writes public |
 | `CONFIG_PATH` | — | YAML config file whose values sit under the environment (`--config` names it explicitly) |
 
+`DATABASE_URL` is the only required variable (default: none). It is a standard
+PostgreSQL connection string, for example
+`postgres://sorovault:password@localhost:5432/sorovault?sslmode=disable`. If
+your platform mounts secrets as files, set `DATABASE_URL_FILE` to the path
+instead; the file's trailing newline is trimmed. Setting both is a startup
+error. `sslmode=verify-full` (or your platform's equivalent) is recommended for
+any database that is not on a private loopback network.
+
+`HTTP_ADDR` is the listen address for the JSON API and browse UI (default:
+`:8080`). The default binds on all interfaces; to restrict to loopback, set it
+to `127.0.0.1:8080`. When TLS terminates at a reverse proxy, bind SoroVault to
+a private address reachable by the proxy (use `127.0.0.1:8080` when both run on
+the same host); see the [TLS and the
+proxy](#tls-and-the-proxy) section in the operations guide. `--addr` overrides
+this variable for the duration of one `serve` invocation.
+
 `RPC_URL` sets the Stellar RPC endpoint that SoroVault reads contract code,
 network passphrases, and upgrade events from (default:
 `https://soroban-testnet.stellar.org`). It must be non-empty at startup. For
@@ -615,6 +631,19 @@ added without touching the registry.
 `sorovault backfill-origins` fills in contracts registered before this existed,
 or whose lookup failed. It only looks at contracts still without a creator, so
 it is safe to run repeatedly.
+
+For example, a contract whose deployer is known answers:
+
+```console
+$ curl -s localhost:8080/api/contracts/CDZZ…4PAN | jq .origin
+{
+  "known": true,
+  "creator": "GABC…XYZ",
+  "created_ledger": 4242
+}
+```
+
+When the origin could not be determined, the same request answers `"origin": {"known": false}` instead. Running `sorovault backfill-origins` retries the lookup for contracts that lack one.
 
 ### Verified publishers
 
